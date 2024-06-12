@@ -1,0 +1,11 @@
+com\ues\parcial\controller\EstudianteBean.class
+com\ues\parcial\entity\Inscripcion.class
+com\ues\parcial\controller\MateriaBean.class
+com\ues\parcial\controller\InscripcionBean.class
+com\ues\parcial\service\InscripcionService.class
+com\ues\parcial\service\MateriaDataService.class
+com\ues\parcial\entity\Estudiante.class
+com\ues\parcial\entity\Materia.class
+com\ues\parcial\service\Dao.class
+com\ues\parcial\redirect\Redirect.class
+com\ues\parcial\service\EstudianteService.class

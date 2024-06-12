@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Parcial 2
+        </title>
+    </h:head>
+    <h:body>
+        <f:view>
+            <div >
+                <div class="card">
+                    <p:tabMenu>
+                        <p:menuitem value="Estudiantes" icon="pi pi-fw pi-home" action="#{cEstudiante.irEstudiante}"/>
+                        <p:menuitem value="Materia" icon="pi pi-fw pi-calendar" action="#{cMateria.irMateria}"/>
+                        <p:menuitem value="Inscripcion"  icon="pi pi-fw pi-pencil" action="#{cInscripcion.irInscripcion}"/>
+                    </p:tabMenu>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-10">
+                        <p:panel id="table_views">
+                            <div class="content">
+                                <ui:insert id="content" name="content">
+                                    <p:panel header="proyecto parcial" footer="Resolución parcial 2">
+                                        <p class="m-0">
+                                            Seleccione una opcion en el menu.
+                                        </p>
+                                    </p:panel>
+                                </ui:insert>
+                            </div>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </f:view>
+
+
+
+        <!--Componentes-->
+        <ui:include src="#{root}/xhtml/variables/variables.xhtml"/>
+        <ui:include src="#{root}/xhtml/confirmDialog/confirmDialog.xhtml"/>
+    </h:body>
+</html>

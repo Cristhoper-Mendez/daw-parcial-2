@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="#{root}/index.xhtml">
+        <ui:define name="content">
+            <h:form id='form_list_asignaturas' >
+                <p:toolbar>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton value="Crear Asignatura" icon="pi pi-plus" 
+                                         oncomplete="PF('crearEditarMateria').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <p:dataTable  var="oMateria" value="#{cMateria.listaMaterias}" rows="20" id="tabla_asignaturas" rowIndexVar="i"
+                              rowHover="true" emptyMessage="No hay materias">
+                    <f:facet name="paginatorTopRight">
+                        <p:commandButton  icon="pi pi-refresh"
+                                          action="#{cMateria.recargar()}"
+                                          update="tabla_asignaturas"/>
+                    </f:facet>
+                    <f:facet name="header">
+                        Listado de asignaturas registradas
+                    </f:facet>
+                    <p:column headerText="#">
+                        <h:outputText value="#{i+1}"/>
+                    </p:column>
+                    <p:column headerText="Código" filterBy="#{oMateria.codigo}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{oMateria.codigo}"/>
+                    </p:column>
+                    <p:column headerText="Nombre" filterBy="#{oMateria.codigo}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{oMateria.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Descripción"  >
+                        <h:outputText value="#{oMateria.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Herramientas" exportable="false">
+                        <p:menuButton value="Opciones" style="text-align: center"> 
+                            <p:menuitem 
+                                         actionListener="#{cMateria.cargarMateria(oMateria)}"
+                                         icon="pi pi-pencil" 
+                                          oncomplete="PF('crearEditarMateria').show()"
+                                         update='formCrearEditarMateria '/>
+                            <p:menuitem   icon="pi pi-trash"                                         
+                                         action="#{cMateria.eliminarMateria(oMateria)}"
+                                         update='tabla_asignaturas '>
+                                <p:confirm header="Confirmación" 
+                                           message="¿Seguro que deseas eliminar el Registro # #{oMateria.id}?
+                                           Esta acción es irreversible."
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:menuitem>
+                        </p:menuButton>
+                    </p:column>  
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="formCrearEditarMateria">
+                <p:dialog widgetVar="crearEditarMateria" closable="true" closeOnEscape="true" 
+                          id='crearEditarMateria' draggable="false" showEffect="slide" hideEffect="slide" height="80%" 
+                          resizable="false" responsive="true" maximizable="false" modal="true" position="center"
+                          footer="Datos requeridos marcados con *" width="40%"
+                          header="Crear materia">
+                    <p:ajax event="close" listener="#{cMateria.inicializar()}" update="formCrearEditarMateria"/>
+
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Nombre de la asignatura :" for="@next"/>
+                        <p:inputText maxlength="50" 
+                                     placeholder="Nombre asignatura" 
+                                     required="true" 
+                                     requiredMessage="Nombre es obligatorio"
+                                     value="#{cMateria.materia.nombre}" />
+
+                        <p:outputLabel value="Asignaturas :" for="@next"/>
+                        <p:inputTextarea placeholder="Descripción de asignatura" 
+                                         required="true" 
+                                         maxlength="100"
+                                         requiredMessage="Descripción es obligatoria"
+                                         value="#{cMateria.materia.descripcion}" />
+
+                        <p:outputLabel value="Código :" for="@next"/>
+                        <p:inputMask placeholder="Código de asignatura" 
+                                     mask="99999"
+                                     required="true" 
+                                     requiredMessage="Código es obligatorio"
+                                     value="#{cMateria.materia.codigo}"
+                                     id="cod_materia">
+                        </p:inputMask>
+                        <p:commandButton value="Guardar" icon="pi pi-save" 
+                                         action="#{cMateria.guardarMateria()}" 
+                                         update=" form_list_asignaturas"
+                                         oncomplete="PF('crearEditarMateria').hide()">
+                            <p:confirm header="Confirmación" 
+                                       message="¿Seguro que desea registrar esta asignatura?" 
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

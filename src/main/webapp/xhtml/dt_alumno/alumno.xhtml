@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="#{root}/index.xhtml">
+        <ui:define name="content">
+            <h:form id='form_list_alumnos' >
+                <p:toolbar>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton value="Crear Alumno" icon="pi pi-plus" 
+                                         oncomplete="PF('crearEditarAlumno').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <p:dataTable  var="lalumno" value="#{cEstudiante.listaEstudiantes}" rows="20" id="tabla_alumnos" rowIndexVar="i"
+                              rowHover="true" emptyMessage="No hay estudiantes">
+                    <f:facet name="paginatorTopRight">
+                        <p:commandButton  icon="pi pi-refresh"
+                                          action="#{cEstudiante.recargar()}"
+                                          update="tabla_alumnos"/>
+                    </f:facet>
+                    <f:facet name="header">
+                        Listado de estudiantes  registrados
+                    </f:facet>
+                    <p:column headerText="#">
+                        <h:outputText value="#{i+1}"/>
+                    </p:column>
+                    <p:column headerText="Carnet" filterBy="#{lalumno.carnet}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{lalumno.carnet}"/>
+                    </p:column>
+
+                    <p:column headerText="Nombre" filterBy="#{lalumno.nombre}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{lalumno.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Herramientas" exportable="false">
+                        <p:menuButton value="Opciones" style="text-align: center"> 
+                            <p:menuitem  
+                                         actionListener="#{cEstudiante.cargarEstudiante(lalumno)}"
+                                         icon="pi pi-pencil" 
+                                         oncomplete="PF('crearEditarAlumno').show()"
+                                         update='formCrearAlumno'/>
+                            <p:menuitem  icon="pi pi-trash"
+                                         action="#{cEstudiante.borrarEstudiante(lalumno)}"
+                                         update='tabla_alumnos '>
+                                <p:confirm header="Confirmación" 
+                                           message="¿Seguro que deseas eliminar el Registro # #{lalumno.id}?
+                                           Esta acción es irreversible."
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:menuitem>
+                        </p:menuButton>
+                    </p:column>  
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="formCrearAlumno">
+                <p:dialog widgetVar="crearEditarAlumno" closable="true" closeOnEscape="true" 
+                          id='crearEditarAlumno' draggable="false" showEffect="slide" hideEffect="slide" height="80%" 
+                          resizable="false" responsive="true" maximizable="false" modal="true" position="center"
+                          footer="Datos requeridos marcados con *" width="40%"
+                          header="Crear estudiante">
+                    <p:ajax event="close" listener="#{cEstudiante.inicializar()}" update="formCrearAlumno"/>
+
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Nombre completo :" for="@next"/>
+                        <p:inputText maxlength="50" 
+                                     placeholder="Nombre completo" 
+                                     required="true" 
+                                     requiredMessage="Nombre es obligatorio"
+                                     value="#{cEstudiante.estudiante.nombre}" />
+                        <p:outputLabel value="Carnet :" for="@next"/>
+                        <p:inputMask placeholder="Carnet" 
+                                     mask="9999-9999-9"
+                                     required="true" 
+                                     requiredMessage="Carnet es obligatorio"
+                                     value="#{cEstudiante.estudiante.carnet}"
+                                     id="carnet_est">
+                        </p:inputMask>
+                        <p:commandButton value="Guardar" icon="pi pi-save" 
+                                         action="#{cEstudiante.guardarEstudiante()}"
+                                         update=" form_list_alumnos"
+                                         oncomplete="PF('crearEditarAlumno').hide()">
+                            <p:confirm header="Confirmación" 
+                                       message="¿Seguro que desea registrar este Alumno?" 
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

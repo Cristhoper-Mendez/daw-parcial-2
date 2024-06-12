@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="#{root}/index.xhtml">
+        <ui:define name="content">
+            <h:form id='form_list_inscripciones'>
+                <p:toolbar>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton value="Crear Inscripción" icon="pi pi-plus" 
+                                         oncomplete="PF('crearEditarInscripcion').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <p:dataTable  var="linscrip" value="#{cInscripcion.listaInscripciones}" rows="20" id="tabla_inscripciones" rowIndexVar="i"
+                              rowHover="true" emptyMessage="No hay inscripciones">
+                    <f:facet name="paginatorTopRight">
+                        <p:commandButton  icon="pi pi-refresh"
+                                          action="#{cInscripcion.recargar()}"
+                                          update="tabla_inscripciones"/>
+                    </f:facet>
+                    <f:facet name="header">
+                        Listado de inscripciones registradas
+                    </f:facet>
+                    <p:column headerText="#">
+                        <h:outputText value="#{i+1}"/>
+                    </p:column>
+
+                    <p:column headerText="Carnet" filterBy="#{linscrip.estudiante.carnet}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{linscrip.estudiante.carnet}"/>
+                    </p:column>
+                    <p:column headerText="Nombre" filterBy="#{linscrip.estudiante.nombre}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{linscrip.estudiante.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Código de materia"  filterBy="#{linscrip.materia.codigo}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{linscrip.materia.codigo}"/>
+                    </p:column>
+
+                    <p:column headerText="Ciclo"  filterBy="#{linscrip.ciclo}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{linscrip.ciclo}"/>
+                    </p:column>
+                    <p:column headerText="Año"  filterBy="#{linscrip.year}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{linscrip.year}"/>
+                    </p:column>
+                    <p:column headerText="Fecha de inscripción"  filterBy="#{linscrip.fechaInscripcion}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{linscrip.fechaInscripcion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/> 
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column exportable="false">
+                        <p:menuButton value="Opciones" style="text-align: center"> 
+                            <p:menuitem  
+                                action="#{cInscripcion.cargarInscripcion(linscrip)}"
+                                oncomplete="PF('crearEditarInscripcion').show();"   
+                                icon="pi pi-pencil" 
+                                update='formCrearEditarInscripcion '/>
+                            <p:menuitem   icon="pi pi-trash"
+                                          action="#{cInscripcion.borrarInscripcion(linscrip)}"    
+                                          update='form_list_inscripciones'>
+                                <p:confirm header="Confirmación" 
+                                           message="¿Seguro que deseas eliminar el registro?
+                                           Esta acción es irreversible."
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:menuitem>
+                        </p:menuButton>
+                    </p:column>  
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="formCrearEditarInscripcion">
+                <p:dialog widgetVar="crearEditarInscripcion" closable="true" closeOnEscape="true" 
+                          id='crearEditarInscripcion' draggable="false" showEffect="slide" hideEffect="slide" height="80%" 
+                          resizable="false" responsive="true" maximizable="false" modal="true" position="center"
+                          footer="Datos requeridos marcados con *" width="40%"
+                          header="Inscripción de asignatura a estudiante">
+                    <p:ajax event="close" listener="#{cInscripcion.inicializar()}" update="crearEditarInscripcion"/>
+
+                    <p:panelGrid columns="2">                        
+                        <p:outputLabel value="Estudiante :" for="@next"/>
+                        <p:selectOneMenu id="slcEstudiante" 
+                                         required="true"
+                                         filter="true" filterMatchMode="contains"
+                                         filterPlaceholder="Estudiantes" autoWidth="false"
+                                         placeholder="Estudiantes" style="width: 100%"
+                                         value="#{cInscripcion.estudiante.id}"
+                                         rendered="#{cInscripcion.estudiante.id == null}"> 
+                            <f:selectItem value="#{null}" itemLabel="Seleccione una opcion"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{cEstudiante.listaEstudiantes}" var="alm"
+                                           itemLabel="#{alm.carnet} | #{alm.nombre}"
+                                           itemValue="#{alm.id}"/>
+                        </p:selectOneMenu>
+                        <p:selectOneMenu id="asd" 
+                                         required="true"
+                                         filter="true" filterMatchMode="contains"
+                                         filterPlaceholder="Estudiantes" autoWidth="false"
+                                         placeholder="Estudiantes" style="width: 100%"
+                                         value="#{cInscripcion.estudiante.id}"
+                                         rendered="#{cInscripcion.estudiante.id != null}"
+                                         disabled="true"> 
+                            <f:selectItem value="#{null}" itemLabel="Seleccione una opcion"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{cEstudiante.listaEstudiantes}" var="alm"
+                                           itemLabel="#{alm.carnet} | #{alm.nombre}"
+                                           itemValue="#{alm.id}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Materias :" for="@next"/>
+                        <p:selectOneMenu id="slcAsignatura" 
+                                         required="true"
+                                         filter="true" filterMatchMode="contains"
+                                         filterPlaceholder="Materias" autoWidth="false"
+                                         placeholder="Materias" style="width: 100%"
+                                         value="#{cInscripcion.materia.id}"
+                                         rendered="#{cInscripcion.materia.id == null}"> 
+                            <f:selectItem value="#{null}" itemLabel="Seleccione una opcion"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{cMateria.listaMaterias}" var="mat"
+                                           itemLabel="#{mat.codigo} | #{mat.nombre}"
+                                           itemValue="#{mat.id}"/>
+                        </p:selectOneMenu>
+                        <p:selectOneMenu id="asddd" 
+                                         required="true"
+                                         filter="true" filterMatchMode="contains"
+                                         filterPlaceholder="Materias" autoWidth="false"
+                                         placeholder="Materias" style="width: 100%"
+                                         value="#{cInscripcion.materia.id}"
+                                         rendered="#{cInscripcion.materia.id != null}"
+                                         disabled="true"> 
+                            <f:selectItem value="#{null}" itemLabel="Seleccione una opcion"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{cMateria.listaMaterias}" var="mat"
+                                           itemLabel="#{mat.codigo} | #{mat.nombre}"
+                                           itemValue="#{mat.id}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Ciclo : " for="@next"/>
+                        <p:spinner  value="#{cInscripcion.inscripcion.ciclo}" 
+                                    placeholder="Ciclo" required="true" 
+                                    decimalPlaces="0" decimalSeparator="." 
+                                    min="0" max="200" styleClass="inputtext"/>
+                        <p:outputLabel value="Año" for="@next"/>
+                        <p:inputMask placeholder="Año" 
+                                     mask="9999"
+                                     required="true" 
+                                     value="#{cInscripcion.inscripcion.year}">
+                        </p:inputMask>
+
+                        <p:commandButton value="Guardar" icon="pi pi-save" 
+                                         action="#{cInscripcion.guardarInscripcion()}"
+                                         update="form_list_inscripciones"
+                                         oncomplete="PF('crearEditarInscripcion').hide()">
+                            <p:confirm header="Confirmación" 
+                                       message="¿Seguro que desea registrar esta Inscripción?" 
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
